@@ -1,2 +1,2 @@
-rm classes/*.class
-rm *.nxj
+rm classes/*.class;
+rm *.nxj;

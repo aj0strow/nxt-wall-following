@@ -1,7 +1,6 @@
 import lejos.nxt.UltrasonicSensor;
 
-
-public class UltrasonicPoller extends Thread{
+public class UltrasonicPoller extends Thread {
 	private UltrasonicSensor us;
 	private UltrasonicController cont;
 	
