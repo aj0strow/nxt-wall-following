@@ -1,4 +1,3 @@
-import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.*;
 
 public class PController implements UltrasonicController {
