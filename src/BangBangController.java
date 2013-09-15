@@ -10,6 +10,7 @@ import lejos.nxt.*;
 */
 
 public class BangBangController implements UltrasonicController {
+	
 	// maximum sensor distance, and the amount of times
 	// it needs to show up to be considered a legit reading
 	private static final int MAX_DISTANCE = 255;
@@ -30,6 +31,11 @@ public class BangBangController implements UltrasonicController {
 		// wheels are on backwards, so it should drive in reverse
 		leftMotor.backward();
 		rightMotor.backward();
+	}
+	
+	@Override
+	public String getType() {
+		return "BangBang";
 	}
 	
 	@Override

@@ -32,7 +32,7 @@ public class Lab1 {
 		// with the controller chosen, set up printer, sensor, poller
 		UltrasonicSensor sensor = new UltrasonicSensor(SENSOR_PORT);
 		UltrasonicPoller poller = new UltrasonicPoller(sensor, controller);
-		Printer printer = new Printer(option, controller);
+		Printer printer = new Printer(controller);
 		
 		// the poller and printer are threads, must be started
 		poller.start();

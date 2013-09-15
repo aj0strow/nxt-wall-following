@@ -2,7 +2,6 @@ import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.*;
 
 public class PController implements UltrasonicController {
-	
 	private final int bandCenter, bandwith;
 	private final int motorStraight = 200, FILTER_OUT = 20;
 	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.C;	
@@ -11,7 +10,6 @@ public class PController implements UltrasonicController {
 	private int filterControl;
 	
 	public PController(int bandCenter, int bandwith) {
-		//Default Constructor
 		this.bandCenter = bandCenter;
 		this.bandwith = bandwith;
 		leftMotor.setSpeed(motorStraight);
@@ -20,6 +18,11 @@ public class PController implements UltrasonicController {
 		rightMotor.forward();
 		currentLeftSpeed = 0;
 		filterControl = 0;
+	}
+	
+	@Override
+	public String getType() {
+		return "P Type";
 	}
 	
 	@Override
@@ -46,5 +49,4 @@ public class PController implements UltrasonicController {
 	public int readSensorDistance() {
 		return this.distance;
 	}
-
 }

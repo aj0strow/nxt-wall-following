@@ -11,7 +11,6 @@ public class UltrasonicPoller extends Thread {
 	
 	public void run() {
 		while (true) {
-			//process collected data
 			controller.processSensorData(sensor.getDistance());
 			try { Thread.sleep(10); } catch(Exception e) {}
 		}

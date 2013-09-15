@@ -6,4 +6,6 @@ public interface UltrasonicController {
 	public int readSensorDistance();
 	
 	public void processSensorData(int distance);
+	
+	public String getType();
 }
