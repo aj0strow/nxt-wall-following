@@ -23,7 +23,7 @@ public class PController implements UltrasonicController {
 	}
 	
 	@Override
-	public void processUSData(int distance) {
+	public void processSensorData(int distance) {
 		
 		// rudimentary filter
 		if (distance == 255 && filterControl < FILTER_OUT) {
@@ -43,7 +43,7 @@ public class PController implements UltrasonicController {
 
 	
 	@Override
-	public int readUSDistance() {
+	public int readSensorDistance() {
 		return this.distance;
 	}
 

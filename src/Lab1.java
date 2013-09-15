@@ -3,7 +3,6 @@ import lejos.nxt.*;
 public class Lab1 {
 	private static final SensorPort SENSOR_PORT = SensorPort.S1;	
 	private static final int BAND_CENTER = 20, BAND_WIDTH = 3;
-	private static final int motorLow = 200, motorHigh = 400;
 	
 	public static void main(String [] args) {
 		Printer.printMainMenu();

@@ -35,6 +35,6 @@ public class Printer extends Thread {
 		} else if (option == Button.ID_RIGHT) {
 			LCD.drawString("P type", 0, 1);
 		}	
-		LCD.drawString("US Distance: " + controller.readUSDistance(), 0, 2);
+		LCD.drawString("US Distance: " + controller.readSensorDistance(), 0, 2);
 	}
 }

@@ -34,7 +34,7 @@ public class BangBangController implements UltrasonicController {
 	
 	@Override
 	// 0mm <= sensorDistance <= 255mm
-	public void processUSData(int sensorDistance) {
+	public void processSensorData(int sensorDistance) {
 		setDistance(legitDistance(sensorDistance));
 		
 		LCD.clear();
@@ -57,7 +57,7 @@ public class BangBangController implements UltrasonicController {
 	}
 
 	@Override
-	public int readUSDistance() {
+	public int readSensorDistance() {
 		return this.distance;
 	}
 	
