@@ -2,25 +2,17 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
 public class Printer extends Thread {
-	
-	private UltrasonicController cont;
 	private final int option;
+	private UltrasonicController controller;
 	
-	public Printer(int option, UltrasonicController cont) {
+	public Printer(int option, UltrasonicController controller) {
 		this.option = option;
-		this.cont = cont;
+		this.controller = controller;
 	}
 	
 	public void run() {
 		while (true) {
-			LCD.clear();
-			LCD.drawString("Controller Type is... ", 0, 0);
-			if (this.option == Button.ID_LEFT)
-				LCD.drawString("BangBang", 0, 1);
-			else if (this.option == Button.ID_RIGHT)
-				LCD.drawString("P type", 0, 1);
-			LCD.drawString("US Distance: " + cont.readUSDistance(), 0, 2);
-						
+			printInfo();
 			try {
 				Thread.sleep(200);
 			} catch (Exception e) {
@@ -33,5 +25,16 @@ public class Printer extends Thread {
 		LCD.clear();
 		LCD.drawString("left = bangbang",  0, 0);
 		LCD.drawString("right = p type", 0, 1);
+	}
+	
+	private void printInfo() {
+		LCD.clear();
+		LCD.drawString("Controller Type is... ", 0, 0);
+		if (option == Button.ID_LEFT) {
+			LCD.drawString("BangBang", 0, 1);
+		} else if (option == Button.ID_RIGHT) {
+			LCD.drawString("P type", 0, 1);
+		}	
+		LCD.drawString("US Distance: " + controller.readUSDistance(), 0, 2);
 	}
 }

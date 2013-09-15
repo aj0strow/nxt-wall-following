@@ -16,20 +16,18 @@ public class BangBangController implements UltrasonicController {
 	private static final int LEGIT_AMOUNT = 5;
 	
 	private final int bandCenter, bandwidth;
-	private final int motorLow, motorHigh;
-	private final int motorStraight = 300;
 	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.C;
 	
 	// distances are in millimeters
 	private int distance, legitCount = 0;
-	boolean maxToZero = false;
+	private boolean maxToZero = false;
 	
-	public BangBangController(int bandCenter, int bandwidth, int motorLow, int motorHigh) {
+	public BangBangController(int bandCenter, int bandwidth) {
 		this.bandCenter = bandCenter;
 		this.bandwidth = bandwidth;
-		this.motorLow = motorLow;
-		this.motorHigh = motorHigh;
 		straight();
+		
+		// wheels are on backwards, so it should drive in reverse
 		leftMotor.backward();
 		rightMotor.backward();
 	}
@@ -99,17 +97,17 @@ public class BangBangController implements UltrasonicController {
 	* straight speed for going straight. 
 	*/
 	private void left() {
-		leftMotor.setSpeed(motorLow);
-		rightMotor.setSpeed(motorHigh);
+		leftMotor.setSpeed(LOW_SPEED);
+		rightMotor.setSpeed(HIGH_SPEED);
 	}
 	
 	private void right() {
-		leftMotor.setSpeed(motorHigh);
-		rightMotor.setSpeed(motorLow);
+		leftMotor.setSpeed(HIGH_SPEED);
+		rightMotor.setSpeed(LOW_SPEED);
 	}
 	
 	private void straight() {
-		leftMotor.setSpeed(motorStraight);
-		rightMotor.setSpeed(motorStraight);
+		leftMotor.setSpeed(MEDIUM_SPEED);
+		rightMotor.setSpeed(MEDIUM_SPEED);
 	}
 }

@@ -1,19 +1,19 @@
 import lejos.nxt.UltrasonicSensor;
 
 public class UltrasonicPoller extends Thread {
-	private UltrasonicSensor us;
-	private UltrasonicController cont;
+	private UltrasonicSensor sensor;
+	private UltrasonicController controller;
 	
-	public UltrasonicPoller(UltrasonicSensor us, UltrasonicController cont) {
-		this.us = us;
-		this.cont = cont;
+	public UltrasonicPoller(UltrasonicSensor sensor, UltrasonicController controller) {
+		this.sensor = sensor;
+		this.controller = controller;
 	}
 	
 	public void run() {
 		while (true) {
 			//process collected data
-			cont.processUSData(us.getDistance());
-			try { Thread.sleep(10); } catch(Exception e){}
+			controller.processUSData(sensor.getDistance());
+			try { Thread.sleep(10); } catch(Exception e) {}
 		}
 	}
 
