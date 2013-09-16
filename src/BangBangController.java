@@ -9,7 +9,7 @@ import lejos.nxt.LCD;
 */
 	
 /*
-*  The BangBang controller sets the right motor to slow / fast speed
+*  The BangBang controller sets the motors to set slow / fast speeds
 *  to make path adjustments when the robot strays too far from the
 *  band center.
 */
