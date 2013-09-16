@@ -1,35 +1,46 @@
-import lejos.nxt.*;
+import lejos.nxt.LCD;
 
 /*
-* !!! IMPORTANT !!!
+*  !!! IMPORTANT SETUP !!!
 *
-* The BangBangController expects the robot to look 45deg to the
-* LEFT with respect to the orientation of the LCD display. So it 
-* should be placed on the right of whatever it is supposed to sense.
+*  The BangBangController expects the robot to look 45deg to the
+*  LEFT with respect to the orientation of the LCD display. So it 
+*  should be placed on the right of whatever it is supposed sense.
+*/
+	
+/*
+*  The BangBang controller sets the right motor to slow / fast speed
+*  to make path adjustments when the robot strays too far from the
+*  band center.
 */
 
 public class BangBangController implements UltrasonicController {
 	
-	// maximum sensor distance, and the amount of times
-	// it needs to show up to be considered a legit reading
-	private static final int MAX_DISTANCE = 255;
-	private static final int LEGIT_AMOUNT = 5;
+	// the slow and fast speeds for right motor adjustments
+	private static final int LOW_SPEED = 70;
+	private static final int MEDIUM_SPEED = 150;
+	private static final int HIGH_SPEED = 300;
 	
-	private final int bandCenter, bandwidth;
-	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.C;
 	
-	// distances are in millimeters
-	private int distance, legitCount = 0;
-	private boolean maxToZero = false;
+	// desired distance from the wall
+	private final int bandCenter;
+	
+	// allowed deviation from the band center before an adjustment is made
+	private final int bandwidth;
+	private int distance;
+	
+	private int gapCount = 0;
+	private final int GAP_TIMEOUT = 8;
 	
 	public BangBangController(int bandCenter, int bandwidth) {
 		this.bandCenter = bandCenter;
 		this.bandwidth = bandwidth;
+		
 		straight();
 		
 		// wheels are on backwards, so it should drive in reverse
-		leftMotor.backward();
-		rightMotor.backward();
+		leftMotor.forward();
+		rightMotor.forward();
 	}
 	
 	@Override
@@ -38,62 +49,36 @@ public class BangBangController implements UltrasonicController {
 	}
 	
 	@Override
-	// 0mm <= sensorDistance <= 255mm
-	public void processSensorData(int sensorDistance) {
-		setDistance(legitDistance(sensorDistance));
+	public void processSensorData(int pollerDistance) {
+		this.distance = pollerDistance;
+		int delta = distance - bandCenter;
 		
 		LCD.clear();
-		LCD.drawString("sensor: " + sensorDistance, 0, 0);
-		LCD.drawString("real: " + distance, 0, 1);
+		LCD.drawString("distance: " + distance, 0, 0);
+		LCD.drawString("band center: " + bandCenter, 0, 1);
+		LCD.drawString("delta: " + delta, 0, 2);
 		
-		int diff = distance - bandCenter;
 		// too far away
-		if (diff > bandwidth) {
-			LCD.drawString("LEFT", 0, 2);
-			left();
+		if (delta > bandwidth) {
+			if (gapCount >= GAP_TIMEOUT) {
+				left();
+			} else {
+				gapCount ++;
+				straight();
+			}
 		// too close
-		} else if (diff < -bandwidth) { 
-			LCD.drawString("RIGHT", 0, 2);
+		} else if (delta < -bandwidth) { 
+			gapCount = 0;
 			right();
 		} else { 
-			LCD.drawString("STRAIGHT", 0, 2);
+			gapCount = 0;
 			straight(); 
 		}
 	}
 
 	@Override
 	public int readSensorDistance() {
-		return this.distance;
-	}
-	
-	/*
-	* The sensor reads erroneous max distance measurements when it is
-	* very close to a wall, or also occasionally for no reason.
-	* 
-	* To make sure the measured distance is legit, we need to make sure 
-	* it shows up multiple times in a row, and also check whether it was 
-	* heading towards 0 or to the max distance. 
-	*/
-	private int legitDistance(int sensorDistance) {
-		if (sensorDistance >= MAX_DISTANCE) {
-			if (legitCount > LEGIT_AMOUNT) {
-				legitCount = 0;
-				return extremeDistance();
-			} else {
-				legitCount++;
-				return distance;
-			}
-		} 
-		return sensorDistance;
-	}
-	
-	private int extremeDistance() {
-		return maxToZero ? 0 : MAX_DISTANCE;
-	}
-
-	private void setDistance(int distance) {
-		this.maxToZero = distance < MAX_DISTANCE / 2;
-		this.distance = distance;
+		return distance;
 	}
 	
 	/*
@@ -102,17 +87,20 @@ public class BangBangController implements UltrasonicController {
 	* straight speed for going straight. 
 	*/
 	private void left() {
-		leftMotor.setSpeed(LOW_SPEED);
+		LCD.drawString("LEFT", 0, 3);
+		leftMotor.setSpeed(MEDIUM_SPEED);
 		rightMotor.setSpeed(HIGH_SPEED);
 	}
 	
 	private void right() {
+		LCD.drawString("RIGHT", 0, 3);
 		leftMotor.setSpeed(HIGH_SPEED);
 		rightMotor.setSpeed(LOW_SPEED);
 	}
 	
 	private void straight() {
-		leftMotor.setSpeed(MEDIUM_SPEED);
-		rightMotor.setSpeed(MEDIUM_SPEED);
+		LCD.drawString("STRAIGHT", 0, 3);
+		leftMotor.setSpeed(DEFAULT_SPEED);
+		rightMotor.setSpeed(DEFAULT_SPEED);
 	}
 }

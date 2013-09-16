@@ -1,22 +1,35 @@
-import lejos.nxt.*;
+import lejos.nxt.LCD;
 
 public class PController implements UltrasonicController {
-	private final int bandCenter, bandwith;
-	private final int motorStraight = 200, FILTER_OUT = 20;
-	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.C;	
+	private final int bandCenter, bandwidth;
 	private int distance;
-	private int currentLeftSpeed;
-	private int filterControl;
+	private int rightMotorSpeed;
+	private int leftMotorSpeed;
 	
-	public PController(int bandCenter, int bandwith) {
+	private static final int MIN_SPEED = 50;
+	private static final int MAX_SPEED = 450;
+	
+	private static final int ACCELERATION = 10;
+	
+	private int gapCount = 0;
+	private final int GAP_TIMEOUT = 8;
+	
+	public PController(int bandCenter, int bandwidth) {
+		/*
+		* The P Controller uses varies the right wheel speed linearly to the distance from
+		* the wall. When it is too far, the right wheel is sped up, too near, right wheel is slowed.
+		*/
+		
 		this.bandCenter = bandCenter;
-		this.bandwith = bandwith;
-		leftMotor.setSpeed(motorStraight);
-		rightMotor.setSpeed(motorStraight);
+		this.bandwidth = bandwidth;
+		
+		straight();
+		
+		leftMotor.setSpeed(leftMotorSpeed);
+		rightMotor.setSpeed(rightMotorSpeed);
+		
 		leftMotor.forward();
 		rightMotor.forward();
-		currentLeftSpeed = 0;
-		filterControl = 0;
 	}
 	
 	@Override
@@ -25,27 +38,51 @@ public class PController implements UltrasonicController {
 	}
 	
 	@Override
-	public void processSensorData(int distance) {
+	public void processSensorData(int pollerDistance) {
+		this.distance = pollerDistance;
 		
-		// rudimentary filter
-		if (distance == 255 && filterControl < FILTER_OUT) {
-			// bad value, do not set the distance var, however do increment the filter value
-			filterControl ++;
-		} else if (distance == 255){
-			// true 255, therefore set distance to 255
-			this.distance = distance;
+		int delta = distance - bandCenter;
+		
+		LCD.clear();
+		LCD.drawString("distance: " + distance, 0, 0);
+		LCD.drawString("band center: " + bandCenter, 0, 1);
+		LCD.drawString("delta: " + delta, 0, 2);
+		
+		// too far away
+		if (delta > bandwidth) {
+			if (gapCount >= GAP_TIMEOUT) left();
+			else gapCount ++;
+		// too close
+		} else if (delta < -bandwidth) { 
+			gapCount = 0;
+			right();
 		} else {
-			// distance went below 255, therefore reset everything.
-			filterControl = 0;
-			this.distance = distance;
+			gapCount = 0;
+			straight();
 		}
-		// TODO: process a movement based on the us distance passed in (P style)
 		
+		// assign the new motor speed
+		leftMotor.setSpeed(leftMotorSpeed);
+		rightMotor.setSpeed(rightMotorSpeed);
+	}
+	
+	private void left() {
+		rightMotorSpeed = Math.min(rightMotorSpeed + 5, MAX_SPEED);
+	}
+	
+	private void right() {
+		rightMotorSpeed = Math.max(rightMotorSpeed - 5, MIN_SPEED);
+		leftMotorSpeed = Math.min(leftMotorSpeed + 5, MAX_SPEED);
+	}
+	
+	private void straight() {
+		rightMotorSpeed = DEFAULT_SPEED;
+		leftMotorSpeed = DEFAULT_SPEED;
 	}
 
 	
 	@Override
 	public int readSensorDistance() {
-		return this.distance;
+		return distance;
 	}
 }
