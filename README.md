@@ -1,8 +1,25 @@
 nxj-wall-following
 ==================
 
-Lab 1 of ECSE 211 at McGill. To clean and compile the program, source the compile script:
+> Lab 1 of ECSE 211 at McGill, by AJ Ostrow and Vitaliy Kuzmin, Fall 2013. 
+
+
+### shell commands
+
+To clean the project:
+
+```
+$ source clean.sh
+```
+
+To clean and compile:
 
 ```
 $ source compile.sh
+```
+
+To clean, compile and uplaod to NXT brick:
+
+```
+$ source upload.sh
 ```
