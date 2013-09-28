@@ -1,4 +1,4 @@
-nxj-wall-following
+nxt-wall-following
 ==================
 
 > Lab 1 of ECSE 211 at McGill, by AJ Ostrow and Vitaliy Kuzmin, Fall 2013. 
